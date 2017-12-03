@@ -3,16 +3,19 @@ defmodule Earmark.Helpers.AttrParser do
   import Earmark.Helpers.StringHelpers, only: [ behead: 2 ]
   import Earmark.Message, only: [add_message: 2]
 
-  # alias Earmark.Context
+  alias Earmark.Context
+
+  use Earmark.Types
 
   @type errorlist :: list(String.t)
 
-#   @spec parse_attrs(Context.t, String.t, number()) :: {map, errorlist}
+  @spec parse_attrs(Context.t, String.t, number()) :: {Context.t, map()}
   def parse_attrs(context, attrs, lnb) do
     { attrs, errors } = _parse_attrs(%{}, attrs, [], lnb)
     { add_errors(context, errors, lnb), attrs }
   end
 
+  @spec _parse_attrs( map(), String.t, strings, number() ) :: {map(), strings} 
   defp _parse_attrs(dict, attrs, errors, lnb) do
     cond do
       Regex.match?(~r{^\s*$}, attrs) -> {dict, errors}
@@ -53,6 +56,7 @@ defmodule Earmark.Helpers.AttrParser do
     end
   end
 
+  @spec add_errors( Context.t, strings, number() ) :: Context.t
   defp add_errors(context, [], _lnb), do: context
   defp add_errors(context, errors, lnb), do: add_message(context, {:warning, lnb, "Illegal attributes #{inspect errors} ignored in IAL"})
 
