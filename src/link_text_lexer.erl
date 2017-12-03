@@ -1,4 +1,4 @@
--file("/usr/local/Cellar/erlang/20.1.5/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 0).
+-file("/home/robert/.asdf/installs/erlang/20.1/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 0).
 %% The source of this file is part of leex distribution, as such it
 %% has the same Copyright as the other files in the leex
 %% distribution. The Copyright is defined in the accompanying file
@@ -16,7 +16,7 @@
 
 dismiss_backslash([$\\|Chars]) -> Chars.
 
--file("/usr/local/Cellar/erlang/20.1.5/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 14).
+-file("/home/robert/.asdf/installs/erlang/20.1/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 14).
 
 format_error({illegal,S}) -> ["illegal characters ",io_lib:write_string(S)];
 format_error({user,S}) -> S.
@@ -495,4 +495,4 @@ yyaction_9(TokenChars, TokenLine) ->
 yyaction_10(TokenChars, TokenLine) ->
      { token, { verbatim, TokenLine, TokenChars } } .
 
--file("/usr/local/Cellar/erlang/20.1.5/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 309).
+-file("/home/robert/.asdf/installs/erlang/20.1/lib/erlang/lib/parsetools-2.1.5/include/leexinc.hrl", 309).

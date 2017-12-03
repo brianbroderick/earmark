@@ -305,7 +305,6 @@
   end
 
 
-  defp is_image?( {match_text, _, _, _} ), do: String.starts_with?(match_text, "!")
   defp is_image?( {match_text, _, _, _, _} ), do: String.starts_with?(match_text, "!")
   @trailing_newlines ~r{\n*\z}
 

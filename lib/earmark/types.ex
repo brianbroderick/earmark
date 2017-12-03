@@ -11,6 +11,8 @@ defmodule Earmark.Types do
       @type inline_code_continuation :: {nil | String.t, number}
 
       @type strings :: list(String.t)
+
+      @type elixir_token :: {atom(), String.t}
     end
   end
 

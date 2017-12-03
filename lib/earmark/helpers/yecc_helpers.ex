@@ -3,7 +3,7 @@ defmodule Earmark.Helpers.YeccHelpers do
 
   def parse!( text, lexer: lexer, parser: parser ) do
     case parse(text, lexer: lexer, parser: parser) do
-        {:ok, ast}  -> ast
+        {:ok, ast}  -> ast |> elixirize()
         {:error, _} -> nil
     end
   end
@@ -13,4 +13,6 @@ defmodule Earmark.Helpers.YeccHelpers do
       parser.parse(tokens)
     end
   end
+
+  defp elixirize({l, r}), do: { to_string(l), to_string(r) }
 end

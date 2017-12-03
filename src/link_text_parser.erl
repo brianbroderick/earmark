@@ -14,7 +14,7 @@ make_image_tuple({L, R}) -> {L, string:concat("!", R)}.
 
 title_tuple({Title, Parsed}) -> {Title, string:join(["[", Parsed, "]"], "")}.
 
--file("/usr/local/Cellar/erlang/20.1.5/lib/erlang/lib/parsetools-2.1.5/include/yeccpre.hrl", 0).
+-file("/home/robert/.asdf/installs/erlang/20.1/lib/erlang/lib/parsetools-2.1.5/include/yeccpre.hrl", 0).
 %%
 %% %CopyrightBegin%
 %%
