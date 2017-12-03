@@ -7,6 +7,9 @@ defmodule Earmark.Helpers.ReparseHelpers do
     it can be reparsed (as elements of list items).
   """
   # In case we are inside a code block we return the verbatim text
+  @spec indent_list_item_body( Line.t, number ) :: String.t
+  def indent_list_item_body(line, level)
+
   def indent_list_item_body(%{inside_code: true, line: line}, _level) do
     line
   end
@@ -15,16 +18,12 @@ defmodule Earmark.Helpers.ReparseHelpers do
     String.slice(line, 2..-1)
   end
   # Add additional spaces for any indentation past level 1
-  def indent_list_item_body(%Line.Indent{level: level, content: content}, target_level)
-  when level * 4 == target_level do
-    content
+  def indent_list_item_body(%Line.Indent{level: level, content: content}, target_level) do
+    cond do
+      level * 4  > target_level -> String.duplicate(" ", level *4 - target_level) <> content
+      true                      -> content  # same as fall through body
+    end
   end
-
-  def indent_list_item_body(%Line.Indent{level: level, content: content}, target_level)
-  when level * 4  > target_level do
-    String.duplicate(" ", level *4 - target_level) <> content
-  end
-
   def indent_list_item_body(line, _) do
     line.content
   end

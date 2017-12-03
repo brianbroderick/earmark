@@ -3,6 +3,7 @@ defmodule Earmark.Helpers.LookaheadHelpers do
   use Earmark.Types
 
   alias Earmark.Line
+
   import Earmark.Helpers.LineHelpers
   import Earmark.Helpers.LeexHelpers
 
@@ -14,7 +15,7 @@ defmodule Earmark.Helpers.LookaheadHelpers do
 
   Otherwise `{nil, 0}` is returned
   """
-#   @spec opens_inline_code(numbered_line) :: inline_code_continuation
+  @spec opens_inline_code(Line.t) :: inline_code_continuation
   def opens_inline_code( %{line: line, lnb: lnb} ) do
     case tokenize(line, with: :string_lexer) |> has_still_opening_backtix(nil) do
       nil      -> {nil, 0}
@@ -30,7 +31,7 @@ defmodule Earmark.Helpers.LookaheadHelpers do
   opening backtix
   """
   # (#{},{_,_}) -> {_,_}
-#   @spec still_inline_code(numbered_line, inline_code_continuation) :: inline_code_continuation
+  @spec still_inline_code(Line.t, inline_code_continuation) :: inline_code_continuation
   def still_inline_code( %{line: line, lnb: lnb}, old = {pending, _pending_lnb} ) do
     case tokenize(line, with: :string_lexer) |> has_still_opening_backtix({:old, pending}) do
       nil -> {nil, 0}
@@ -39,26 +40,33 @@ defmodule Earmark.Helpers.LookaheadHelpers do
     end
   end
 
+  @typep pending_params ::
+    %{required(:initial_indent) => number(),
+      required(:min_indent)     => maybe(number()),
+      required(:pending)        => maybe(true),
+      required(:pending_lnb)    => number()}
+  @typep pending_btx :: { :old | :new, String.t }
+
+
+
   # A tokenized line {:verabtim, text} | {:backtix, ['``+]} is analyzed for
   # if it is closed (-> nil), not closed (-> {:old, btx}) or reopened (-> {:new, btx})
   # concerning backtix
+  @spec has_still_opening_backtix( list(elixir_token), maybe(pending_btx) ) :: maybe(pending_btx)
   defp has_still_opening_backtix(tokens, opened_so_far)
 
   defp has_still_opening_backtix([], opened_so_far), do: opened_so_far
   defp has_still_opening_backtix([{:verbatim,_}|rest], opened_so_far), do: has_still_opening_backtix(rest, opened_so_far)
   defp has_still_opening_backtix([{:backtix,btx}|rest], nil), do: has_still_opening_backtix(rest, {:new, btx})
-  defp has_still_opening_backtix([{:backtix,btx}|rest], opened_so_far={_, pending}) do
-    if btx == pending do
-      has_still_opening_backtix(rest, nil)
-    else
-      has_still_opening_backtix(rest, opened_so_far)
-    end
-  end
+  defp has_still_opening_backtix([{:backtix,btx}|rest], {_, pending}) when btx==pending,
+    do: has_still_opening_backtix(rest, nil)
+  defp has_still_opening_backtix([_|rest], opened_so_far), 
+    do: has_still_opening_backtix(rest, opened_so_far)
 
   #######################################################################################
   # read_list_lines
   #######################################################################################
-#   @spec read_list_lines( Line.ts, inline_code_continuation, number ) :: {boolean, Line.ts, Line.ts, number, number}
+  # @spec read_list_lines( Line.ts, inline_code_continuation, number() ) :: {boolean, Line.ts, Line.ts, number(), number()}
   @doc """
   Called to slurp in the lines for a list item.
   basically, we allow indents and blank lines, and
@@ -70,9 +78,10 @@ defmodule Earmark.Helpers.LookaheadHelpers do
     _read_list_lines(lines, [], %{pending: pending, pending_lnb: pending_lnb, min_indent: nil, initial_indent: initial_indent})
   end
 
-  @type read_list_info :: %{pending: maybe(String.t), pending_lnb: number, initial_indent: number, min_indent: maybe(number)}
 
-#   @spec _read_list_lines(Line.ts, Line.ts, read_list_info) :: {boolean, Line.ts, Line.ts, number}
+  # @spec _read_list_lines(Line.ts, Line.ts, pending_params) :: {boolean(), Line.ts, Line.ts, number(), number()}
+  defp _read_list_lines(lines, result, params)
+
   # List items with initial_indent + 2
   defp _read_list_lines([ line = %Line.ListItem{initial_indent: li_indent} | rest ], result,
     params=%{pending: nil, initial_indent: initial_indent, min_indent: min_indent})
@@ -161,11 +170,13 @@ defmodule Earmark.Helpers.LookaheadHelpers do
     { spaced, rest, lines, pending_lnb, min_indent }
   end
 
+  @spec new_min_indent( maybe(number()), number() ) :: number()
   defp new_min_indent(nil,            new_min_indent),                                       do: new_min_indent
   defp new_min_indent(old_min_indent, new_min_indent) when old_min_indent <= new_min_indent, do: old_min_indent
   defp new_min_indent(_,              new_min_indent),                                       do: new_min_indent
 
   # Convenience wrapper around `opens_inline_code` into a map
+  @spec _opens_inline_code(  Line.t, pending_params ) :: pending_params
   defp _opens_inline_code( line, params ) do
     with {pending, pending_lnb} = opens_inline_code(line), do:
       %{ params | pending: pending, pending_lnb: pending_lnb }

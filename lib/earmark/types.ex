@@ -8,7 +8,7 @@ defmodule Earmark.Types do
       @type numbered_line :: %{required(:line) => String.t, required(:lnb) => number, optional(:inside_code) => String.t}
 
       @type maybe(t) :: t | nil
-      @type inline_code_continuation :: {nil | String.t, number}
+      @type inline_code_continuation :: {maybe(String.t), number()}
 
       @type strings :: list(String.t)
 
