@@ -10,7 +10,7 @@ defmodule Earmark.Types do
       @type maybe(t) :: t | nil
       @type inline_code_continuation :: {nil | String.t, number}
 
-      @type strings :: list(binary())
+      @type strings :: list(String.t)
     end
   end
 
