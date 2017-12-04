@@ -33,6 +33,8 @@ defmodule Earmark.Helpers.ReparseHelpers do
     Extract the verbatim text of `%Earmark.Line.t` elements with less alignment so that
     it can be reparsed (as elements of footnotes or indented code)
   """
+  @spec properly_indent( Line.t, number() ) :: String.t
+  def properly_indent(line, level)
   # In case we are inside a code block we return the verbatim text
   def properly_indent(%{inside_code: true, line: line}, _level) do
     line
